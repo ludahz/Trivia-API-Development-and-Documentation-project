@@ -103,9 +103,6 @@ def create_app(test_config=None):
             "category": question.category
 
         }
-        print(question.id)
-        print(jsonStr)
-
         if question is None:
             abort(404)
         else:
@@ -160,7 +157,6 @@ def create_app(test_config=None):
         category = body.get("category", None)
         difficulty = body.get("difficulty", None)
         search = body.get("searchTerm", None)
-        print('Search Term', search)
 
         """
         TEST: Search by any phrase. The questions list will update to include
@@ -246,27 +242,27 @@ def create_app(test_config=None):
         quizCategory = body.get('quiz_category')
         question = []
         currentQuest = {}
-
         try:
             if prevQuestions == []:
                 question = Question.query.filter(
                     Question.category == quizCategory['id']).all()
                 n = random.randrange(0, len(question) - 1)
                 currentQuest = question[n]
+                return jsonify({
+                    "success": True,
+                    "question": {'id': currentQuest.id, 'question': currentQuest.question, "answer": currentQuest.answer, }
+                })
             else:
                 question = Question.query.filter(
                     Question.category == quizCategory['id']).filter(not_(Question.question.in_(prevQuestions))).all()
-                print("Length Of questions:", len(question))
                 n = random.randrange(0, len(question))
                 currentQuest = question[n]
 
         except:
-            pass
-
+            abort(404)
         return jsonify({
             "success": True,
-            "previousQuestions": prevQuestions,
-            "question": {'question': currentQuest.question, "answer": currentQuest.answer, }
+            "question": {'id': currentQuest.id, 'question': currentQuest.question, "answer": currentQuest.answer, }
         })
 
     """
@@ -275,10 +271,23 @@ def create_app(test_config=None):
     and shown whether they were correct or not.
     """
 
-    """
-    @TODO:
-    Create error handlers for all expected errors
-    including 404 and 422.
-    """
+    # Create error handlers for all expected errors
+    # including 404 and 422.
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return (
+            jsonify({
+                "success": False, "error": 404, "message": "resource not found"
+            })
+        )
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return (
+            jsonify({
+                "success": False, "error": 422, "message": "unprocessable"
+            })
+        )
 
     return app
