@@ -1,9 +1,12 @@
+from crypt import methods
 import json
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
+
+from sqlalchemy import not_
 
 from models import setup_db, Question, Category
 
@@ -152,12 +155,12 @@ def create_app(test_config=None):
     @app.route("/questions", methods=["POST"])
     def post_question():
         body = request.get_json()
-
         new_question = body.get("question", None)
         answer = body.get("answer", None)
         category = body.get("category", None)
         difficulty = body.get("difficulty", None)
-        search = body.get("search", None)
+        search = body.get("searchTerm", None)
+        print('Search Term', search)
 
         """
         TEST: Search by any phrase. The questions list will update to include
@@ -221,7 +224,8 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "questions": current_questions,
-            "total_questions": len(Question.query.all())
+            "total_questions": len(Question.query.all()),
+            "current_category": category
         })
 
     """
@@ -230,13 +234,42 @@ def create_app(test_config=None):
     category to be shown.
     """
 
-    """
-    @TODO:
-    Create a POST endpoint to get questions to play the quiz.
-    This endpoint should take category and previous question parameters
-    and return a random questions within the given category,
-    if provided, and that is not one of the previous questions.
+    # Create a POST endpoint to get questions to play the quiz.
+    # This endpoint should take category and previous question parameters
+    # and return a random questions within the given category,
+    # if provided, and that is not one of the previous questions.
 
+    @app.route('/quizzes', methods=['POST'])
+    def get_quiz():
+        body = request.get_json()
+        prevQuestions = body.get('previous_questions')
+        quizCategory = body.get('quiz_category')
+        question = []
+        currentQuest = {}
+
+        try:
+            if prevQuestions == []:
+                question = Question.query.filter(
+                    Question.category == quizCategory['id']).all()
+                n = random.randrange(0, len(question) - 1)
+                currentQuest = question[n]
+            else:
+                question = Question.query.filter(
+                    Question.category == quizCategory['id']).filter(not_(Question.question.in_(prevQuestions))).all()
+                print("Length Of questions:", len(question))
+                n = random.randrange(0, len(question))
+                currentQuest = question[n]
+
+        except:
+            pass
+
+        return jsonify({
+            "success": True,
+            "previousQuestions": prevQuestions,
+            "question": {'question': currentQuest.question, "answer": currentQuest.answer, }
+        })
+
+    """
     TEST: In the "Play" tab, after a user selects "All" or a category,
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.

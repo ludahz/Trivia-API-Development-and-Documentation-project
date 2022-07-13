@@ -15,14 +15,10 @@ class Question extends Component {
 
   render() {
     const { question, answer, category, difficulty, categories } = this.props;
-    console.log(category)
     let category_value
-    {Object.values(categories).map((item) => {
-      if(item.id === category){
-        category_value = item.type
-      }
-    })}
-    console.log(Object.values(categories))
+    {Object.values(categories).map(item => 
+      item.id === category?category_value = item.type : null
+    )}
     return (
       <div className='Question-holder'>
         <div className='Question'>{question}</div>
