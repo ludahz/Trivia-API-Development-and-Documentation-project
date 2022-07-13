@@ -14,15 +14,23 @@ class Question extends Component {
   }
 
   render() {
-    const { question, answer, category, difficulty } = this.props;
+    const { question, answer, category, difficulty, categories } = this.props;
+    console.log(category)
+    let category_value
+    {Object.values(categories).map((item) => {
+      if(item.id === category){
+        category_value = item.type
+      }
+    })}
+    console.log(Object.values(categories))
     return (
       <div className='Question-holder'>
         <div className='Question'>{question}</div>
         <div className='Question-status'>
           <img
             className='category'
-            alt={`${category.toLowerCase()}`}
-            src={`${category.toLowerCase()}.svg`}
+            alt={`${category_value.toLowerCase()}`}
+            src={`${category_value.toLowerCase()}.svg`}
           />
           <div className='difficulty'>Difficulty: {difficulty}</div>
           <img

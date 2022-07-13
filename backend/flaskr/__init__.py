@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -66,7 +67,14 @@ def create_app(test_config=None):
     @app.route("/questions")
     def retrieve_questions():
         selection = Question.query.order_by(Question.id).all()
+        categories = Category.query.order_by(Category.id).all()
         current_questions = paginate_questions(request, selection)
+        data = []
+        for category in categories:
+            data.append({
+                "id": category.id,
+                "type": category.type
+            })
 
         if len(current_questions) == 0:
             abort(404)
@@ -74,8 +82,34 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "questions": current_questions,
+            "categories": data,
             "total_questions": len(Question.query.all()),
         })
+
+    # GET questions with specific ID
+    @app.route('/questions/<int:question_id>', methods=["GET"])
+    def retrieve_question_by_id(question_id):
+        question = Question.query.filter(
+            Question.id == question_id).one_or_none()
+
+        jsonStr = {
+            "id": question.id,
+            "answer": question.answer,
+            "difficulty": question.difficulty,
+            "question": question.question,
+            "category": question.category
+
+        }
+        print(question.id)
+        print(jsonStr)
+
+        if question is None:
+            abort(404)
+        else:
+            return jsonify({
+                "success": True,
+                "question": jsonStr
+            })
 
     """
     TEST: At this point, when you start the application
@@ -174,9 +208,10 @@ def create_app(test_config=None):
     """
 
    # Create a GET endpoint to get questions based on category.
-    @app.route("/questions/<category>")
+    # @app.route("/questions/<category>")
+    @app.route("/categories/<int:category>/questions")
     def retrieve_question(category):
-        selection = Question.query.order_by(Question.category).filter(
+        selection = Question.query.filter(
             Question.category == category).all()
         current_questions = paginate_questions(request, selection)
 

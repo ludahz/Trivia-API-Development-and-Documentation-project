@@ -138,21 +138,36 @@ class QuestionView extends Component {
             Categories
           </h2>
           <ul>
-            {Object.keys(this.state.categories).map((id) => (
+            {Object.values(this.state.categories).map((id, ind) =>(
+              <li
+              key={ind}
+              onClick={() => {
+                this.getByCategory(id.id);
+              }}
+            >
+              {id.type}
+                <img
+                  className='category'
+                  alt={`${id.type.toLowerCase()}`}
+                  src={`${id.type.toLowerCase()}.svg`}
+                />
+              </li>
+            ))}
+            {/* {Object.keys(this.state.categories).map((id) => (
               <li
                 key={id}
                 onClick={() => {
                   this.getByCategory(id);
                 }}
               >
-                {this.state.categories[id]}
+                {this.state.categories[id].type}
                 <img
                   className='category'
-                  alt={`${this.state.categories[id].toLowerCase()}`}
-                  src={`${this.state.categories[id].toLowerCase()}.svg`}
+                  alt={`${this.state.categories[id].type.toLowerCase()}`}
+                  src={`${this.state.categories[id].type.toLowerCase()}.svg`}
                 />
               </li>
-            ))}
+            ))} */}
           </ul>
           <Search submitSearch={this.submitSearch} />
         </div>
@@ -160,10 +175,11 @@ class QuestionView extends Component {
           <h2>Questions</h2>
           {this.state.questions.map((q, ind) => (
             <Question
-              key={q.id}
+              key={ind}
               question={q.question}
               answer={q.answer}
-              category={this.state.categories[q.category]}
+              category={q.category}
+              categories={this.state.categories}
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
             />
