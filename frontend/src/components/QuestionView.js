@@ -138,6 +138,7 @@ class QuestionView extends Component {
             Categories
           </h2>
           <ul>
+            {/* Modified this section as its picking up undefined */}
             {Object.values(this.state.categories).map((id, ind) =>(
               <li
               key={ind}
