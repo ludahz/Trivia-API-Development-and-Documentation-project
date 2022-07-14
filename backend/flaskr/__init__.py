@@ -212,6 +212,7 @@ def create_app(test_config=None):
         selection = Question.query.filter(
             Question.category == category).all()
         current_questions = paginate_questions(request, selection)
+        current_category = Category.query.filter(Category.id == category).all()
 
         if len(current_questions) == 0:
             abort(404)
@@ -220,7 +221,7 @@ def create_app(test_config=None):
             "success": True,
             "questions": current_questions,
             "total_questions": len(Question.query.all()),
-            "current_category": category
+            "current_category": current_category[0].type
         })
 
     """
