@@ -158,6 +158,7 @@ def create_app(test_config=None):
         difficulty = body.get("difficulty", None)
         search = body.get("searchTerm", None)
 
+        print(body)
         """
         TEST: Search by any phrase. The questions list will update to include
         only question that include that string within their question.
@@ -169,16 +170,24 @@ def create_app(test_config=None):
             # It should return any questions for whom the search term
             # is a substring of the question.
             if search:
+                print(category)
                 selection = Question.query.order_by(Question.id).filter(
                     Question.question.ilike("%{}%".format(search))
                 )
                 current_questions = paginate_questions(request, selection)
+                curr_cat_id = current_questions[0]['category']
+
+                current_category = Category.query.filter(
+                    Category.id == curr_cat_id).all()
+
+                print(current_category)
 
                 return jsonify(
                     {
                         "success": True,
                         "questions": current_questions,
-                        "total_questions": len(selection.all())
+                        "total_questions": len(selection.all()),
+                        "current_category":  current_category[0].type
                     }
                 )
 

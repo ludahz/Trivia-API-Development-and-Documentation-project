@@ -56,11 +56,12 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_get_question_search_with_results(self):
         res = self.client().post(
-            "/questions", json={"searchTerm": "What is the largest lake in Africa?"})
+            "/questions", json={"searchTerm": "Africa?"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
+        self.assertEqual(data["current_category"], 'Geography')
         self.assertTrue(data["total_questions"])
         self.assertEqual(len(data["questions"]), 1)
 
