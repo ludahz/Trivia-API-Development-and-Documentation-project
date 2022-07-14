@@ -32,10 +32,10 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
         return jsonify({
-            'message': 'hello'
+            'message': 'Testing!'
         })
 
-    # Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    # Set up CORS. Allow '*' for origins.
     cors = CORS(app, resources={r'*': {'origins': '*'}})
 
     # Use the after_request decorator to set Access-Control-Allow
@@ -46,7 +46,7 @@ def create_app(test_config=None):
         )
         return response
 
-    # Create an endpoint to handle GET requests
+    # Endpoint to handle GET requests
     # for all available categories.
     @app.route('/categories')
     def retrieve_categories():
@@ -63,9 +63,9 @@ def create_app(test_config=None):
             "total_categories": len(Category.query.all()),
         })
 
-    # Create an endpoint to handle GET requests for questions,
+    # Endpoint to handle GET requests for questions,
     # including pagination (every 10 questions).
-    # This endpoint should return a list of questions,
+    # This endpoint returns a list of questions,
     # number of total questions, current category, categories.
     @app.route("/questions")
     def retrieve_questions():
@@ -95,17 +95,17 @@ def create_app(test_config=None):
         question = Question.query.filter(
             Question.id == question_id).one_or_none()
 
-        jsonStr = {
-            "id": question.id,
-            "answer": question.answer,
-            "difficulty": question.difficulty,
-            "question": question.question,
-            "category": question.category
-
-        }
         if question is None:
             abort(404)
         else:
+            jsonStr = {
+                "id": question.id,
+                "answer": question.answer,
+                "difficulty": question.difficulty,
+                "question": question.question,
+                "category": question.category
+
+            }
             return jsonify({
                 "success": True,
                 "question": jsonStr
@@ -146,7 +146,7 @@ def create_app(test_config=None):
     This removal will persist in the database and when you refresh the page.
     """
 
-    # Create an endpoint to POST a new question,
+    # Endpoint to POST a new question,
     # which will require the question and answer text,
     # category, and difficulty score.
     @app.route("/questions", methods=["POST"])
@@ -176,9 +176,9 @@ def create_app(test_config=None):
 
                 return jsonify(
                     {
-                        "Success": True,
+                        "success": True,
                         "questions": current_questions,
-                        "total questions": len(selection.all())
+                        "total_questions": len(selection.all())
                     }
                 )
 
@@ -207,7 +207,6 @@ def create_app(test_config=None):
     """
 
    # Create a GET endpoint to get questions based on category.
-    # @app.route("/questions/<category>")
     @app.route("/categories/<int:category>/questions")
     def retrieve_question(category):
         selection = Question.query.filter(
@@ -230,7 +229,7 @@ def create_app(test_config=None):
     category to be shown.
     """
 
-    # Create a POST endpoint to get questions to play the quiz.
+    # POST endpoint to get questions to play the quiz.
     # This endpoint should take category and previous question parameters
     # and return a random questions within the given category,
     # if provided, and that is not one of the previous questions.
