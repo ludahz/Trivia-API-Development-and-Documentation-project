@@ -241,6 +241,39 @@ You will need to provide detailed documentation of your API endpoints including 
 }
 ```
 
+`POST '/api/v1.0/questions`
+
+- Fetches questions or single question that match search term
+- Request Arguments:
+
+```json
+{
+	"searchTerm": "rice"
+}
+```
+
+- Returns: An object with `question` key with a list of object value of the question matching the search term,
+  - `current_category` key with string value of the category
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+  - `total_questions` key with an integer value corresponding the number of total questions
+
+```json
+{
+	"current_category": "Entertainment",
+	"questions": [
+		{
+			"answer": "Tom Cruise",
+			"category": 5,
+			"difficulty": 4,
+			"id": 4,
+			"question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+		}
+	],
+	"success": true,
+	"total_questions": 1
+}
+```
+
 `GET '/api/v1.0/questions/${question_id}'`
 
 - Fetches an object of a single question based on the question `id`

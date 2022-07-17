@@ -59,10 +59,8 @@ def create_app(test_config=None):
             "total_categories": len(Category.query.all()),
         })
 
-    # Endpoint to handle GET requests for questions,
-    # including pagination (every 10 questions).
-    # This endpoint returns a list of questions,
-    # number of total questions, current category, categories.
+    # Endpoint to handle GET requests for questions, including pagination (every 10 questions).
+    # This endpoint returns a list of questions,number of total questions, current category, categories.
     @app.route("/questions")
     def retrieve_questions():
         selection = Question.query.order_by(Question.id).all()
@@ -91,12 +89,11 @@ def create_app(test_config=None):
         question = Question.query.filter(
             Question.id == question_id).one_or_none()
 
-        current_category = Category.query.filter(
-            Category.id == question.category).all()
-
         if question is None:
             abort(404)
         else:
+            current_category = Category.query.filter(
+                Category.id == question.category).all()
             jsonStr = {
                 "id": question.id,
                 "answer": question.answer,
@@ -158,12 +155,12 @@ def create_app(test_config=None):
         search = body.get("searchTerm", None)
 
         print(body)
+
         """
         TEST: Search by any phrase. The questions list will update to include
         only question that include that string within their question.
         Try using the word "title" to start.
         """
-
         try:
             # Create a POST endpoint to get questions based on a search term.
             # It should return any questions for whom the search term
@@ -247,7 +244,6 @@ def create_app(test_config=None):
         quizCategory = body.get('quiz_category')
         question = []
         currentQuest = {}
-        print(body)
 
         if quizCategory['type'] == 'click':
             try:

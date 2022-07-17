@@ -84,7 +84,7 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `/questions`,
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
@@ -94,6 +94,7 @@ class QuestionView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        console.log(result)
         this.setState({
           questions: result.questions,
           totalQuestions: result.total_questions,
@@ -174,7 +175,9 @@ class QuestionView extends Component {
         </div>
         <div className='questions-list'>
           <h2>Questions</h2>
-          {this.state.questions.map((q, ind) => (
+          {this.state.questions === undefined ? (
+            <h3>Sorry, no question to display! Please try a different search term.</h3>
+          ) : this.state.questions.map((q, ind) => (
             <Question
               key={ind}
               question={q.question}
@@ -185,6 +188,17 @@ class QuestionView extends Component {
               questionAction={this.questionAction(q.id)}
             />
           ))}
+          {/* {this.state.questions.map((q, ind) => (
+            <Question
+              key={ind}
+              question={q.question}
+              answer={q.answer}
+              category={q.category}
+              categories={this.state.categories}
+              difficulty={q.difficulty}
+              questionAction={this.questionAction(q.id)}
+            />
+          ))} */}
           <div className='pagination-menu'>{this.createPagination()}</div>
         </div>
       </div>
