@@ -247,6 +247,7 @@ def create_app(test_config=None):
         quizCategory = body.get('quiz_category')
         question = []
         currentQuest = {}
+        print(body)
 
         if quizCategory['type'] == 'click':
             try:

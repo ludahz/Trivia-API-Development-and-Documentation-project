@@ -75,18 +75,319 @@ You will need to provide detailed documentation of your API endpoints including 
 
 `GET '/api/v1.0/categories'`
 
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Fetches a list of categories objects
+- each object has `id` and `type` keys with values corresponding `integer` of `id` and `string` of `type`
 - Request Arguments: None
-- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+- Returns: An object with a single key, `categories`, that contains an object of `id: category_integer` and `type: category_string` key: value pairs.
 
 ```json
 {
-  "1": "Science",
-  "2": "Art",
-  "3": "Geography",
-  "4": "History",
-  "5": "Entertainment",
-  "6": "Sports"
+	"categories": [
+		{
+			"id": 1,
+			"type": "Science"
+		},
+		{
+			"id": 2,
+			"type": "Art"
+		},
+		{
+			"id": 3,
+			"type": "Geography"
+		},
+		{
+			"id": 4,
+			"type": "History"
+		},
+		{
+			"id": 5,
+			"type": "Entertainment"
+		},
+		{
+			"id": 6,
+			"type": "Sports"
+		}
+	],
+	"success": true,
+	"total_categories": 6
+}
+```
+
+`GET '/api/v1.0/questions`
+
+- Fetches an object with categories and questions keys
+- `categories` key contains list of catogry objects with `id` and `type` keys.
+- `questions` key contains list of question objects with `answer`, `difficulty`, `category`, `id` and `question` keys
+- Request Arguments: None
+- Returns: An object with `categories` key with list of objects value,
+  - `questions` key with a list of objects value,
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+  - `total_questions` key with a value of coressponding total number of questions,
+
+```json
+{
+	"categories": [
+		{
+			"id": 1,
+			"type": "Science"
+		},
+		{
+			"id": 2,
+			"type": "Art"
+		},
+		{
+			"id": 3,
+			"type": "Geography"
+		},
+		{
+			"id": 4,
+			"type": "History"
+		},
+		{
+			"id": 5,
+			"type": "Entertainment"
+		},
+		{
+			"id": 6,
+			"type": "Sports"
+		}
+	],
+	"questions": [
+		{
+			"answer": "Tom Cruise",
+			"category": 5,
+			"difficulty": 4,
+			"id": 4,
+			"question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+		},
+		{
+			"answer": "Maya Angelou",
+			"category": 4,
+			"difficulty": 2,
+			"id": 5,
+			"question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+		},
+		{
+			"answer": "Edward Scissorhands",
+			"category": 5,
+			"difficulty": 3,
+			"id": 6,
+			"question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+		},
+		{
+			"answer": "Muhammad Ali",
+			"category": 4,
+			"difficulty": 1,
+			"id": 9,
+			"question": "What boxer's original name is Cassius Clay?"
+		}
+	],
+	"success": true,
+	"total_questions": 26
+}
+```
+
+`POST '/api/v1.0/questions`
+
+- Creates a new question
+- Request Arguments: `question`, `answer`, `category`, `difficulty`
+- Returns: An object with `created` key with value of `id` for the created question,
+  - `questions` key with a value of list of question objects,
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+  - `total_questions` key with a value of integer number of available questions.
+
+```json
+{
+	"created": 42,
+	"questions": [
+		{
+			"answer": "Tom Cruise",
+			"category": 5,
+			"difficulty": 4,
+			"id": 4,
+			"question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+		},
+		{
+			"answer": "Maya Angelou",
+			"category": 4,
+			"difficulty": 2,
+			"id": 5,
+			"question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+		},
+		{
+			"answer": "Edward Scissorhands",
+			"category": 5,
+			"difficulty": 3,
+			"id": 6,
+			"question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+		},
+		{
+			"answer": "Muhammad Ali",
+			"category": 4,
+			"difficulty": 1,
+			"id": 9,
+			"question": "What boxer's original name is Cassius Clay?"
+		},
+		{
+			"answer": "Brazil",
+			"category": 6,
+			"difficulty": 3,
+			"id": 10,
+			"question": "Which is the only team to play in every soccer World Cup tournament?"
+		}
+	],
+	"success": true,
+	"total_questions": 26
+}
+```
+
+`GET '/api/v1.0/questions/${question_id}'`
+
+- Fetches an object of a single question based on the question `id`
+- Request Arguments: None
+- Returns: An object with `question` key with an object value of the question,
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+
+```json
+{
+	"question": {
+		"answer": "Tom Cruise",
+		"category": "Entertainment",
+		"difficulty": 4,
+		"id": 4,
+		"question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+	},
+	"success": true
+}
+```
+
+`DELETE '/api/v1.0/questions/${question_id}'`
+
+- Deletes a question based on the given question `id`
+- Request Arguments: None
+- Returns: An object with `deleted` key with a value of corresponding id of the deleted question,
+  - `questions` key with a value of list of question objects,
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+  - `total_questions` key with a value of integer number of available questions.
+
+```json
+{
+	"deleted": 12,
+	"questions": [
+		{
+			"answer": "Tom Cruise",
+			"category": 5,
+			"difficulty": 4,
+			"id": 4,
+			"question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+		},
+		{
+			"answer": "Maya Angelou",
+			"category": 4,
+			"difficulty": 2,
+			"id": 5,
+			"question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+		},
+		{
+			"answer": "Edward Scissorhands",
+			"category": 5,
+			"difficulty": 3,
+			"id": 6,
+			"question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+		},
+		{
+			"answer": "Muhammad Ali",
+			"category": 4,
+			"difficulty": 1,
+			"id": 9,
+			"question": "What boxer's original name is Cassius Clay?"
+		},
+		{
+			"answer": "Brazil",
+			"category": 6,
+			"difficulty": 3,
+			"id": 10,
+			"question": "Which is the only team to play in every soccer World Cup tournament?"
+		}
+	],
+	"success": true,
+	"total_questions": 25
+}
+```
+
+`GET '/api/v1.0/categories/${category_id}/questions'`
+
+- Fetches a list of questions based on the category selected.
+- Request Arguments: None
+- Returns: An object with `current_category` key with a string value of the name of the `category`,
+  - `questions` key with a value of list of question objects belonging to the category,
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+  - `total_questions` key with a value of integer number of available questions.
+
+```json
+{
+	"current_category": "Science",
+	"questions": [
+		{
+			"answer": "The Liver",
+			"category": 1,
+			"difficulty": 4,
+			"id": 20,
+			"question": "What is the heaviest organ in the human body?"
+		},
+		{
+			"answer": "Alexander Fleming",
+			"category": 1,
+			"difficulty": 3,
+			"id": 21,
+			"question": "Who discovered penicillin?"
+		},
+		{
+			"answer": "Blood",
+			"category": 1,
+			"difficulty": 4,
+			"id": 22,
+			"question": "Hematology is a branch of medicine involving the study of what?"
+		},
+		{
+			"answer": "science Answer",
+			"category": 1,
+			"difficulty": 1,
+			"id": 40,
+			"question": "Science question?"
+		}
+	],
+	"success": true,
+	"total_questions": 26
+}
+```
+
+`POST '/api/v1.0/quizzes'`
+
+- Fetches a random question based on the category selected.
+- Request Arguments:
+
+```json
+{
+	"previous_questions": ["Who discovered penicillin?"],
+	"quiz_category": {
+		"type": "Science",
+		"id": 1
+	}
+}
+```
+
+- Returns: An object with `question` key with an object value,
+  - `success` key with a value of coressponding result i.e `true` of `false`,
+
+```json
+{
+	"question": {
+		"answer": "Blood",
+		"id": 22,
+		"question": "Hematology is a branch of medicine involving the study of what?"
+	},
+	"success": true
 }
 ```
 
