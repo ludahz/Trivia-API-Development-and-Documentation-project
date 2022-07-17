@@ -1,6 +1,3 @@
-from crypt import methods
-import json
-import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -46,8 +43,7 @@ def create_app(test_config=None):
         )
         return response
 
-    # Endpoint to handle GET requests
-    # for all available categories.
+    # Endpoint to handle GET requests for all available categories.
     @app.route('/categories')
     def retrieve_categories():
         categories = Category.query.order_by(Category.id).all()
@@ -95,6 +91,9 @@ def create_app(test_config=None):
         question = Question.query.filter(
             Question.id == question_id).one_or_none()
 
+        current_category = Category.query.filter(
+            Category.id == question.category).all()
+
         if question is None:
             abort(404)
         else:
@@ -103,7 +102,7 @@ def create_app(test_config=None):
                 "answer": question.answer,
                 "difficulty": question.difficulty,
                 "question": question.question,
-                "category": question.category
+                "category": current_category[0].type
 
             }
             return jsonify({
@@ -170,7 +169,6 @@ def create_app(test_config=None):
             # It should return any questions for whom the search term
             # is a substring of the question.
             if search:
-                print(category)
                 selection = Question.query.order_by(Question.id).filter(
                     Question.question.ilike("%{}%".format(search))
                 )
@@ -179,8 +177,6 @@ def create_app(test_config=None):
 
                 current_category = Category.query.filter(
                     Category.id == curr_cat_id).all()
-
-                print(current_category)
 
                 return jsonify(
                     {
@@ -251,28 +247,45 @@ def create_app(test_config=None):
         quizCategory = body.get('quiz_category')
         question = []
         currentQuest = {}
-        try:
-            if prevQuestions == []:
+
+        if quizCategory['type'] == 'click':
+            try:
+                n = random.randint(1, 6)
                 question = Question.query.filter(
-                    Question.category == quizCategory['id']).all()
-                n = random.randrange(0, len(question) - 1)
-                currentQuest = question[n]
+                    Question.category == n).filter(not_(Question.question.in_(prevQuestions))).all()
+                if question == []:
+                    n = random.randint(1, 6)
+                    newQuestion = Question.query.filter(Question.category == n).filter(
+                        not_(Question.question.in_(prevQuestions))).all()
+                    currentQuest = newQuestion
+                else:
+                    currentQuest = question
+                return jsonify({
+                    "success": True,
+                    "question": {'id': currentQuest[0].id, 'question': currentQuest[0].question, "answer": currentQuest[0].answer, }
+                })
+            except:
+                abort(404)
+        else:
+            try:
+                if prevQuestions == []:
+                    question = Question.query.filter(
+                        Question.category == quizCategory['id']).all()
+                    n = random.randrange(0, len(question) - 1)
+                    currentQuest = question[n]
+
+                else:
+                    question = Question.query.filter(
+                        Question.category == quizCategory['id']).filter(not_(Question.question.in_(prevQuestions))).all()
+                    n = random.randrange(0, len(question))
+                    currentQuest = question[n]
                 return jsonify({
                     "success": True,
                     "question": {'id': currentQuest.id, 'question': currentQuest.question, "answer": currentQuest.answer, }
                 })
-            else:
-                question = Question.query.filter(
-                    Question.category == quizCategory['id']).filter(not_(Question.question.in_(prevQuestions))).all()
-                n = random.randrange(0, len(question))
-                currentQuest = question[n]
 
-        except:
-            abort(404)
-        return jsonify({
-            "success": True,
-            "question": {'id': currentQuest.id, 'question': currentQuest.question, "answer": currentQuest.answer, }
-        })
+            except:
+                abort(404)
 
     """
     TEST: In the "Play" tab, after a user selects "All" or a category,
