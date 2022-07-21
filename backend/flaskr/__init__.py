@@ -154,8 +154,6 @@ def create_app(test_config=None):
         difficulty = body.get("difficulty", None)
         search = body.get("searchTerm", None)
 
-        print(body)
-
         """
         TEST: Search by any phrase. The questions list will update to include
         only question that include that string within their question.
@@ -185,10 +183,11 @@ def create_app(test_config=None):
                 )
 
             else:
+                if new_question or answer == '':
+                    abort(422)
                 question = Question(
                     question=new_question, answer=answer, category=category, difficulty=difficulty)
                 question.insert()
-
                 selection = Question.query.order_by(Question.id).all()
                 current_questions = paginate_questions(request, selection)
 
